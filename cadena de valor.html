@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadena de Valor - Servicios TI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .sector-selector {
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .sector-btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sector-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .sector-btn.active {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+        }
+
+        .sector-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .sector-btn:hover::before {
+            left: 100%;
+        }
+
+        .value-chain {
+            padding: 40px;
+            position: relative;
+        }
+
+        .chain-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .chain-container {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .activities-section {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .section-title {
+            position: absolute;
+            left: -120px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            background: #f39c12;
+            color: white;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 15px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .support-activities {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .primary-activities {
+            display: flex;
+            gap: 5px;
+        }
+
+        .activity-card {
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .activity-card:nth-child(1) { animation-delay: 0.1s; }
+        .activity-card:nth-child(2) { animation-delay: 0.2s; }
+        .activity-card:nth-child(3) { animation-delay: 0.3s; }
+        .activity-card:nth-child(4) { animation-delay: 0.4s; }
+        .activity-card:nth-child(5) { animation-delay: 0.5s; }
+
+        .support-activity {
+            background: linear-gradient(45deg, #e67e22, #d35400);
+            flex: 1;
+        }
+
+        .primary-activity {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            flex: 1;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            z-index: 5;
+        }
+
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .activity-card:hover::before {
+            opacity: 1;
+        }
+
+        .margin-label {
+            position: absolute;
+            right: -100px;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            background: linear-gradient(45deg, #f1c40f, #f39c12);
+            color: #2c3e50;
+            padding: 10px 30px;
+            font-weight: bold;
+            border-radius: 15px;
+            z-index: 10;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            animation: slideInDown 0.4s ease-out;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #e74c3c;
+        }
+
+        .modal h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .modal p {
+            line-height: 1.6;
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .support-color { background: linear-gradient(45deg, #e67e22, #d35400); }
+        .primary-color { background: linear-gradient(45deg, #3498db, #2980b9); }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section-title, .margin-label {
+                position: relative;
+                transform: none;
+                left: auto;
+                right: auto;
+                top: auto;
+                margin: 10px 0;
+                text-align: center;
+            }
+
+            .chain-container {
+                padding: 0 20px;
+            }
+
+            .primary-activities {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>CADENA DE VALOR</h1>
+            <p>Diseño de Servicios de Tecnologías de la Información</p>
+        </div>
+
+        <div class="sector-selector">
+            <button class="sector-btn active" data-sector="produccion">Producción y Logística</button>
+            <button class="sector-btn" data-sector="educacion">Educación Universitaria</button>
+        </div>
+
+        <div class="value-chain">
+            <h2 class="chain-title" id="chainTitle">Sector: Producción y Logística</h2>
+            
+            <div class="chain-container">
+                <div class="activities-section">
+                    <div class="section-title">Actividades de Soporte</div>
+                    <div class="support-activities" id="supportActivities">
+                        <!-- Actividades de soporte se generan dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="section-separator"></div>
+
+                <div class="activities-section">
+                    <div class="primary-activities" id="primaryActivities">
+                        <!-- Actividades primarias se generan dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="margin-label">MARGEN</div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color support-color"></div>
+                    <span>Actividades de Soporte</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color primary-color"></div>
+                    <span>Actividades Primarias</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="activityModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <p id="modalContent"></p>
+        </div>
+    </div>
+
+    <script>
+        // Datos de las cadenas de valor
+        const valueChainData = {
+            produccion: {
+                title: "Sector: Producción y Logística",
+                support: [
+                    {
+                        name: "Infraestructura TI Empresarial",
+                        description: "Sistemas ERP, servidores, redes, bases de datos, cloud computing, seguridad informática y arquitectura tecnológica para soportar operaciones de producción y logística."
+                    },
+                    {
+                        name: "Gestión de Recursos Digitales",
+                        description: "Administración de licencias de software, gestión de usuarios, políticas de acceso, capacitación en herramientas TI y soporte técnico especializado."
+                    },
+                    {
+                        name: "Desarrollo de Tecnología",
+                        description: "I+D en automatización industrial, IoT para manufactura, inteligencia artificial para optimización, desarrollo de aplicaciones móviles y sistemas de monitoreo en tiempo real."
+                    },
+                    {
+                        name: "Adquisiciones Tecnológicas",
+                        description: "Procurement de hardware especializado, software de manufactura, sensores IoT, sistemas de automatización, contratación de servicios cloud y proveedores tecnológicos."
+                    }
+                ],
+                primary: [
+                    {
+                        name: "Sistemas de Entrada",
+                        description: "Recepción digital de órdenes, gestión de inventarios con RFID/códigos de barras, sistemas de planificación de recursos (MRP), interfaces con proveedores."
+                    },
+                    {
+                        name: "Operaciones Digitales",
+                        description: "Sistemas de control de producción (MES), automatización de líneas, monitoreo IoT de maquinaria, control de calidad digital, gestión de mantenimiento predictivo."
+                    },
+                    {
+                        name: "Logística de Salida",
+                        description: "Sistemas de gestión de almacenes (WMS), optimización de rutas, tracking GPS de envíos, integración con transportistas, gestión de distribución."
+                    },
+                    {
+                        name: "Marketing Digital",
+                        description: "Plataformas B2B, CRM especializado, marketing automation, portales de clientes, e-commerce industrial, analytics de ventas."
+                    },
+                    {
+                        name: "Servicios Postventa",
+                        description: "Sistemas de soporte técnico, mantenimiento remoto, aplicaciones de servicio al cliente, gestión de garantías, portales de autoservicio."
+                    }
+                ]
+            },
+            educacion: {
+                title: "Sector: Educación Universitaria",
+                support: [
+                    {
+                        name: "Infraestructura TI Educativa",
+                        description: "Plataformas LMS (Moodle, Canvas), servidores académicos, redes wifi de campus, bibliotecas digitales, sistemas de videoconferencia y aulas virtuales."
+                    },
+                    {
+                        name: "Gestión de Recursos Académicos",
+                        description: "Sistemas de gestión estudiantil (SIS), administración de personal docente, gestión de licencias educativas, soporte técnico estudiantil y capacitación digital."
+                    },
+                    {
+                        name: "Desarrollo Tecnológico Educativo",
+                        description: "Desarrollo de contenido digital, simuladores educativos, realidad virtual/aumentada para enseñanza, aplicaciones móviles educativas, investigación en EdTech."
+                    },
+                    {
+                        name: "Adquisiciones Educativas",
+                        description: "Procurement de software educativo, hardware para laboratorios, licencias de investigación, plataformas de e-learning, equipos multimedia y tecnología de aulas."
+                    }
+                ],
+                primary: [
+                    {
+                        name: "Admisiones Digitales",
+                        description: "Portales de aplicación online, sistemas de evaluación digital, procesos de matrícula automatizados, gestión de documentos electrónicos, CRM estudiantil."
+                    },
+                    {
+                        name: "Enseñanza-Aprendizaje",
+                        description: "Plataformas de educación virtual, sistemas de gestión de clases, herramientas de colaboración online, evaluación digital, contenido multimedia interactivo."
+                    },
+                    {
+                        name: "Servicios Estudiantiles",
+                        description: "Portales estudiantiles, sistemas de biblioteca digital, aplicaciones móviles de campus, servicios de bienestar estudiantil digitales, plataformas de networking."
+                    },
+                    {
+                        name: "Investigación y Extensión",
+                        description: "Plataformas de gestión de investigación, repositorios digitales, sistemas de publicación académica, colaboración internacional digital, transferencia tecnológica."
+                    },
+                    {
+                        name: "Graduación y Alumni",
+                        description: "Sistemas de seguimiento de egresados, plataformas de networking de alumni, certificación digital de títulos, bolsas de trabajo online, educación continua virtual."
+                    }
+                ]
+            }
+        };
+
+        let currentSector = 'produccion';
+
+        // Elementos del DOM
+        const sectorBtns = document.querySelectorAll('.sector-btn');
+        const chainTitle = document.getElementById('chainTitle');
+        const supportActivities = document.getElementById('supportActivities');
+        const primaryActivities = document.getElementById('primaryActivities');
+        const modal = document.getElementById('activityModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const closeModal = document.querySelector('.close');
+        const mainContainer = document.querySelector('.container');
+        const homeContainer = document.getElementById('homePage');
+
+        // Funciones de navegación
+        function showHomePage() {
+            mainContainer.style.display = 'none';
+            homeContainer.style.display = 'block';
+        }
+
+        function showValueChain() {
+            homeContainer.style.display = 'none';
+            mainContainer.style.display = 'block';
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            renderValueChain();
+            createFloatingParticles();
+        });
+
+        // Event listeners para botones de sector
+        sectorBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                sectorBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentSector = this.dataset.sector;
+                renderValueChain();
+            });
+        });
+
+        // Renderizar cadena de valor
+        function renderValueChain() {
+            const data = valueChainData[currentSector];
+            
+            // Actualizar título
+            chainTitle.textContent = data.title;
+            chainTitle.style.animation = 'none';
+            setTimeout(() => {
+                chainTitle.style.animation = 'slideInUp 0.8s ease-out';
+            }, 10);
+
+            // Limpiar contenedores
+            supportActivities.innerHTML = '';
+            primaryActivities.innerHTML = '';
+
+            // Renderizar actividades de soporte
+            data.support.forEach((activity, index) => {
+                const card = createActivityCard(activity.name, activity.description, 'support-activity');
+                card.style.animationDelay = `${index * 0.1}s`;
+                supportActivities.appendChild(card);
+            });
+
+            // Renderizar actividades primarias
+            data.primary.forEach((activity, index) => {
+                const card = createActivityCard(activity.name, activity.description, 'primary-activity');
+                card.style.animationDelay = `${index * 0.1}s`;
+                primaryActivities.appendChild(card);
+            });
+        }
+
+        // Crear tarjeta de actividad
+        function createActivityCard(name, description, className) {
+            const card = document.createElement('div');
+            card.className = `activity-card ${className}`;
+            card.textContent = name;
+            card.addEventListener('click', () => showModal(name, description));
+            return card;
+        }
+
+        // Mostrar modal
+        function showModal(title, content) {
+            modalTitle.textContent = title;
+            modalContent.textContent = content;
+            modal.style.display = 'block';
+        }
+
+        // Cerrar modal
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Crear partículas flotantes
+        function createFloatingParticles() {
+            const particlesContainer = document.querySelector('.floating-particles');
+            
+            function createParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                particlesContainer.appendChild(particle);
+
+                setTimeout(() => {
+                    particle.remove();
+                }, 6000);
+            }
+
+            // Crear partículas cada segundo
+            setInterval(createParticle, 1000);
+        }
+
+        // Efectos adicionales al hacer hover sobre las tarjetas
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.classList.contains('activity-card')) {
+                e.target.style.transform = 'translateY(-5px) scale(1.02)';
+            }
+        });
+
+        document.addEventListener('mouseout', function(e) {
+            if (e.target.classList.contains('activity-card')) {
+                e.target.style.transform = 'translateY(0) scale(1)';
+            }
+        });
+    </script>
+</body>
+</html>
