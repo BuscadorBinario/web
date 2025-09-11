@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Plataforma para análisis estratégico: Cinco Fuerzas de Porter, Cadena de Valor, SWOT, PESTEL y más herramientas para optimizar tu estrategia empresarial." />
+    <meta name="keywords" content="análisis estratégico, cinco fuerzas, cadena de valor, SWOT, PESTEL, estrategia empresarial" />
     <title>Índice Principal - Análisis Estratégico</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
@@ -44,7 +46,7 @@
         color: var(--text-color);
         transition: background 0.5s, color 0.5s;
       }
-      canvas {
+      canvas#particleCanvas {
         position: absolute;
         top: 0;
         left: 0;
@@ -74,6 +76,55 @@
         font-size: 1rem;
         opacity: 0;
         animation: fadeInUp 1s ease-out 0.5s forwards;
+      }
+      .intro-section {
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px);
+        margin: 20px 0;
+        width: 90%;
+        max-width: 600px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 0.4s forwards;
+        text-align: center;
+      }
+      .intro-section h2 {
+        font-size: 1.8rem;
+        margin: 0 0 10px;
+      }
+      .intro-section p {
+        font-size: 1rem;
+        opacity: 0.9;
+      }
+      .tools-section {
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px);
+        margin: 20px 0;
+        width: 90%;
+        max-width: 600px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 0.5s forwards;
+      }
+      .tools-section h2 {
+        font-size: 1.8rem;
+        margin: 0 0 15px;
+        text-align: center;
+      }
+      .tools-section ul {
+        list-style: none;
+        padding: 0;
+      }
+      .tools-section ul li {
+        margin: 10px 0;
+        font-size: 1rem;
+      }
+      .tools-section ul li strong {
+        color: var(--button-bg);
       }
       .card-container {
         display: flex;
@@ -136,8 +187,94 @@
         width: 200%;
         height: 200%;
       }
+      .chart-container {
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px);
+        margin: 20px 0;
+        width: 90%;
+        max-width: 600px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 0.6s forwards;
+      }
+      .chart-container canvas {
+        max-width: 100%;
+      }
+      .faq-section {
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px);
+        margin: 20px 0;
+        width: 90%;
+        max-width: 600px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 0.7s forwards;
+      }
+      .faq-section h2 {
+        font-size: 1.8rem;
+        margin: 0 0 15px;
+        text-align: center;
+      }
+      .faq-item {
+        margin: 10px 0;
+      }
+      .faq-question {
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: var(--button-bg);
+        border-radius: 8px;
+        transition: background 0.3s;
+      }
+      .faq-question:hover {
+        background: var(--button-hover);
+      }
+      .faq-answer {
+        display: none;
+        padding: 10px;
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+      .faq-answer.open {
+        display: block;
+      }
+      .contact-section {
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(10px);
+        margin: 20px 0;
+        width: 90%;
+        max-width: 600px;
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 0.8s forwards;
+        text-align: center;
+      }
+      .contact-section h2 {
+        font-size: 1.8rem;
+        margin: 0 0 10px;
+      }
+      .contact-section p {
+        font-size: 1rem;
+        opacity: 0.9;
+      }
+      .contact-section a {
+        color: var(--button-bg);
+        text-decoration: none;
+      }
+      .contact-section a:hover {
+        text-decoration: underline;
+      }
       .theme-toggle {
-        position: absolute;
+        position: fixed;
         top: 20px;
         right: 20px;
         background: var(--button-bg);
@@ -152,60 +289,13 @@
       .theme-toggle:hover {
         background: var(--button-hover);
       }
-      .sidebar {
-        position: fixed;
-        top: 0;
-        right: -250px;
-        width: 250px;
-        height: 100%;
-        background: var(--card-bg);
-        backdrop-filter: blur(10px);
-        padding: 20px;
-        transition: right 0.3s ease;
-        z-index: 100;
-      }
-      .sidebar.open {
-        right: 0;
-      }
-      .sidebar-toggle {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        background: var(--button-bg);
-        border: none;
-        padding: 10px;
-        border-radius: 50%;
-        cursor: pointer;
-        color: #fff;
-        font-size: 1.2rem;
-        transition: background 0.3s;
-      }
-      .sidebar-toggle:hover {
-        background: var(--button-hover);
-      }
-      .sidebar ul {
-        list-style: none;
-        padding: 0;
-        margin: 20px 0;
-      }
-      .sidebar ul li {
-        margin: 10px 0;
-      }
-      .sidebar ul li a {
-        color: var(--text-color);
-        text-decoration: none;
-        font-size: 1rem;
-      }
-      .sidebar ul li a:hover {
-        text-decoration: underline;
-      }
       footer {
         margin-top: auto;
         padding: 20px;
         text-align: center;
         font-size: 0.9rem;
         opacity: 0;
-        animation: fadeInUp 1s ease-out 0.6s forwards;
+        animation: fadeInUp 1s ease-out 0.9s forwards;
       }
       @keyframes fadeInDown {
         0% {
@@ -234,6 +324,17 @@
         .tagline {
           font-size: 0.9rem;
         }
+        .intro-section h2,
+        .tools-section h2,
+        .faq-section h2,
+        .contact-section h2 {
+          font-size: 1.5rem;
+        }
+        .intro-section p,
+        .tools-section ul li,
+        .contact-section p {
+          font-size: 0.9rem;
+        }
         .card-container {
           padding: 20px;
         }
@@ -249,35 +350,31 @@
         header i {
           font-size: 1.5rem;
         }
-        .theme-toggle,
-        .sidebar-toggle {
+        .theme-toggle {
           padding: 8px;
           font-size: 1rem;
         }
-        .sidebar {
-          width: 200px;
-          right: -200px;
+        .chart-container,
+        .faq-section,
+        .contact-section {
+          padding: 15px;
+        }
+        .faq-question {
+          font-size: 1rem;
+        }
+        .faq-answer {
+          font-size: 0.8rem;
         }
       }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   </head>
   <body data-theme="dark">
     <canvas id="particleCanvas"></canvas>
     <button class="theme-toggle" aria-label="Cambiar tema">
       <i class="fas fa-moon"></i>
     </button>
-    <button class="sidebar-toggle" aria-label="Abrir menú lateral">
-      <i class="fas fa-bars"></i>
-    </button>
-    <div class="sidebar">
-      <h3>Recursos</h3>
-      <ul>
-        <li><a href="https://hbr.org/1979/03/how-competitive-forces-shape-strategy" target="_blank">Cinco Fuerzas (HBR)</a></li>
-        <li><a href="https://www.mindtools.com/pages/article/newTMC_08.htm" target="_blank">Guía de Cadena de Valor</a></li>
-        <li><a href="https://www.strategicmanagementinsight.com/tools/porters-five-forces.html" target="_blank">Análisis Estratégico</a></li>
-      </ul>
-    </div>
     <header>
       <i class="fas fa-chart-line"></i>
       <div>
@@ -285,10 +382,23 @@
         <p class="tagline" id="tagline"></p>
       </div>
     </header>
+    <section class="intro-section">
+      <h2>¿Qué es el Análisis Estratégico?</h2>
+      <p>El análisis estratégico es un proceso clave para comprender el entorno competitivo de tu negocio, identificar oportunidades y amenazas, y optimizar procesos para lograr ventajas competitivas. Utiliza herramientas como las Cinco Fuerzas de Porter, la Cadena de Valor, SWOT y PESTEL para desarrollar estrategias efectivas que impulsen el crecimiento y la sostenibilidad de tu organización.</p>
+    </section>
+    <section class="tools-section">
+      <h2>Herramientas de Análisis Estratégico</h2>
+      <ul>
+        <li><strong>Cinco Fuerzas de Porter:</strong> Evalúa la intensidad competitiva y el atractivo de una industria mediante cinco fuerzas: amenaza de nuevos entrantes, poder de negociación de proveedores, poder de negociación de clientes, amenaza de sustitutos y rivalidad entre competidores.</li>
+        <li><strong>Cadena de Valor:</strong> Identifica actividades primarias y de apoyo dentro de tu organización para optimizar procesos y generar mayor valor para los clientes.</li>
+        <li><strong>Análisis SWOT:</strong> Analiza fortalezas, debilidades, oportunidades y amenazas para alinear tu estrategia con las condiciones internas y externas.</li>
+        <li><strong>Análisis PESTEL:</strong> Examina factores externos (Políticos, Económicos, Sociales, Tecnológicos, Ecológicos y Legales) que impactan tu negocio.</li>
+      </ul>
+    </section>
     <div class="card-container">
       <div
         class="card"
-        onclick="navigateTo('fuerzas potter.html')"
+        onclick="navigateTo('fuerzas_potter.html')"
         role="button"
         tabindex="0"
         aria-label="Explorar las cinco fuerzas de Porter"
@@ -301,7 +411,7 @@
       </div>
       <div
         class="card"
-        onclick="navigateTo('cadena de valor.html')"
+        onclick="navigateTo('CADENA_DE_VALOR_TI.html')"
         role="button"
         tabindex="0"
         aria-label="Explorar la cadena de valor"
@@ -312,30 +422,71 @@
           <p>Optimiza procesos para generar mayor valor en tu negocio.</p>
         </div>
       </div>
+      <div
+        class="card"
+        onclick="navigateTo('swot_analysis.html')"
+        role="button"
+        tabindex="0"
+        aria-label="Explorar el análisis SWOT"
+      >
+        <i class="fas fa-th"></i>
+        <div class="card-content">
+          <h3>Análisis SWOT</h3>
+          <p>Identifica fortalezas, debilidades, oportunidades y amenazas.</p>
+        </div>
+      </div>
+      <div
+        class="card"
+        onclick="navigateTo('pestel_analysis.html')"
+        role="button"
+        tabindex="0"
+        aria-label="Explorar el análisis PESTEL"
+      >
+        <i class="fas fa-globe"></i>
+        <div class="card-content">
+          <h3>Análisis PESTEL</h3>
+          <p>Evalúa factores externos que impactan tu estrategia.</p>
+        </div>
+      </div>
     </div>
+    <div class="chart-container">
+      <canvas id="strategyChart"></canvas>
+    </div>
+    <section class="faq-section">
+      <h2>Preguntas Frecuentes</h2>
+      <div class="faq-item">
+        <div class="faq-question">¿Qué es el análisis estratégico? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer">El análisis estratégico es un proceso para evaluar el entorno interno y externo de una organización, identificar oportunidades y amenazas, y diseñar estrategias para lograr ventajas competitivas.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">¿Cómo aplico las Cinco Fuerzas de Porter? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer">Analiza cada fuerza (nuevos entrantes, proveedores, clientes, sustitutos, rivalidad) para entender la dinámica competitiva de tu industria y diseñar estrategias defensivas u ofensivas.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">¿Por qué es importante la Cadena de Valor? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer">La Cadena de Valor ayuda a identificar actividades que generan valor y optimizarlas para reducir costos o mejorar la diferenciación, aumentando la competitividad.</div>
+      </div>
+    </section>
+    <section class="contact-section">
+      <h2>Contáctanos</h2>
+      <p>¿Tienes preguntas o necesitas ayuda con tu análisis estratégico? Escríbenos a <a href="mailto:info@buscadorbinario.com">info@buscadorbinario.com</a>.</p>
+    </section>
     <footer>
-      <p>Hecho por BuscadorBinario</p>
+      <p>Hecho por BuscadorBinario | © 2025</p>
     </footer>
     <script>
-      // Theme toggle
+      // Theme toggle with localStorage persistence
       const themeToggle = document.querySelector('.theme-toggle');
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.body.setAttribute('data-theme', savedTheme);
+      themeToggle.innerHTML = `<i class="fas fa-${savedTheme === 'dark' ? 'sun' : 'moon'}"></i>`;
       themeToggle.addEventListener('click', () => {
         const body = document.body;
         const isDark = body.getAttribute('data-theme') === 'dark';
-        body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        const newTheme = isDark ? 'light' : 'dark';
+        body.setAttribute('data-theme', newTheme);
         themeToggle.innerHTML = `<i class="fas fa-${isDark ? 'sun' : 'moon'}"></i>`;
-      });
-
-      // Sidebar toggle
-      const sidebarToggle = document.querySelector('.sidebar-toggle');
-      const sidebar = document.querySelector('.sidebar');
-      sidebarToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('open');
-        gsap.to(sidebar, {
-          right: sidebar.classList.contains('open') ? 0 : -250,
-          duration: 0.3,
-          ease: 'power2.inOut'
-        });
+        localStorage.setItem('theme', newTheme);
       });
 
       // Particle background with parallax
@@ -411,7 +562,7 @@
           y: 20,
           duration: 0.3,
           onComplete: () => {
-            window.open(url, '_blank');
+            window.location.href = url;
             gsap.to('.card-container', { opacity: 1, y: 0, duration: 0.3 });
           }
         });
@@ -431,7 +582,10 @@
       const taglines = [
         'Analiza tu entorno competitivo',
         'Optimiza tu estrategia empresarial',
-        'Descubre ventajas competitivas'
+        'Descubre ventajas competitivas',
+        'Impulsa tu crecimiento estratégico',
+        'Toma decisiones informadas',
+        'Construye un futuro sostenible'
       ];
       let currentTagline = 0;
       const taglineElement = document.getElementById('tagline');
@@ -457,6 +611,61 @@
             card.click();
           }
         });
+      });
+
+      // FAQ toggle
+      document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', () => {
+          const answer = question.nextElementSibling;
+          const isOpen = answer.classList.contains('open');
+          document.querySelectorAll('.faq-answer').forEach(ans => {
+            ans.classList.remove('open');
+            ans.previousElementSibling.querySelector('i').classList.replace('fa-chevron-up', 'fa-chevron-down');
+          });
+          if (!isOpen) {
+            answer.classList.add('open');
+            question.querySelector('i').classList.replace('fa-chevron-down', 'fa-chevron-up');
+          }
+        });
+      });
+
+      // Chart.js initialization
+      const strategyChart = new Chart(document.getElementById('strategyChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Cinco Fuerzas', 'Cadena de Valor', 'SWOT', 'PESTEL'],
+          datasets: [{
+            label: 'Utilidad Estratégica',
+            data: [8, 7, 6, 5],
+            backgroundColor: ['#2563eb', '#1d4ed8', '#3b82f6', '#60a5fa'],
+            borderColor: ['#1e3a8a', '#1e3a8a', '#1e3a8a', '#1e3a8a'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: 'Nivel de Impacto' }
+            },
+            x: {
+              title: { display: true, text: 'Herramientas Estratégicas' }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: 'Impacto de Herramientas Estratégicas' },
+            tooltip: {
+              enabled: true,
+              callbacks: {
+                label: function(context) {
+                  return `${context.dataset.label}: ${context.parsed.y}/10`;
+                }
+              }
+            }
+          }
+        }
       });
     </script>
   </body>

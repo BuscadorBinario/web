@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinco Fuerzas de Porter - Diseño de Servicios de Tecnologías de la Información</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --danger: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #718096;
+            --text-muted: #a0aec0;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 40px -4px rgba(0, 0, 0, 0.1);
+            --blur: blur(20px);
+        }
+        [data-theme="dark"] {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: #0f3460;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --text-muted: #718096;
+            --border: #2d3748;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 20px 40px -4px rgba(0, 0, 0, 0.4);
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: var(--bg-card);
+            backdrop-filter: var(--blur);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .logo i {
+            font-size: 2rem;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sector-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sector-selector label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        select {
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .header-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover::before {
+            left: 100%;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+        .btn-success {
+            background: var(--success);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        .forces-container {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow-xl);
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .forces-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--primary);
+        }
+        .forces-container h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .forces-diagram {
+            display: grid;
+            grid-template-areas:
+                ". suppliers ."
+                "buyers industry rivalry"
+                ". substitutes ."
+                ". barriers .";
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .forces-diagram::before,
+        .forces-diagram::after {
+            content: '';
+            position: absolute;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            height: 2px;
+            z-index: 1;
+        }
+        .force-center {
+            grid-area: industry;
+            background: var(--primary);
+            color: white;
+            padding: 48px;
+            border-radius: 50%;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            min-height: 240px;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+        .force-center::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--accent);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+        .force-center h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .force-center p {
+            font-size: 0.95rem;
+            font-weight: 500;
+            opacity: 0.95;
+        }
+        .force-suppliers { grid-area: suppliers; }
+        .force-buyers { grid-area: buyers; }
+        .force-rivalry { grid-area: rivalry; }
+        .force-substitutes { grid-area: substitutes; }
+        .force-barriers { grid-area: barriers; }
+        .force-block {
+            background: var(--bg-card);
+            padding: 32px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 2px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .force-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .force-block:hover::before {
+            transform: scaleX(1);
+        }
+        .force-block:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+            border-color: #667eea;
+        }
+        .force-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--secondary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .force-title i {
+            font-size: 1.3rem;
+            background: var(--secondary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .force-content {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .rating {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+        .rating input {
+            width: 70px;
+            padding: 10px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        .rating input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .rating span {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: var(--blur);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-content {
+            background: var(--bg-card);
+            max-width: 600px;
+            margin: 5% auto;
+            padding: 40px;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border);
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .close-btn:hover {
+            background: var(--danger);
+            color: white;
+            transform: scale(1.1);
+        }
+        textarea {
+            width: 100%;
+            min-height: 160px;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .chart-container {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow-xl);
+            margin-top: 32px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--accent);
+        }
+        .chart-container h3 {
+            text-align: center;
+            margin-bottom: 32px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .chart-wrapper {
+            position: relative;
+            height: 450px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+        }
+        .summary-section {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow-xl);
+            margin-top: 32px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .summary-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--warning);
+        }
+        .summary-section h3 {
+            text-align: center;
+            margin-bottom: 32px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--warning);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+        .summary-card {
+            background: var(--bg-secondary);
+            padding: 24px;
+            border-radius: 16px;
+            border-left: 6px solid;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .summary-card:nth-child(1) { border-left-color: #667eea; }
+        .summary-card:nth-child(2) { border-left-color: #f093fb; }
+        .summary-card:nth-child(3) { border-left-color: #10b981; }
+        .summary-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .summary-card h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .summary-card div {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-weight: 500;
+        }
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: var(--blur);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .header-left,
+            .header-right {
+                justify-content: center;
+            }
+            .forces-diagram {
+                grid-template-areas:
+                    "suppliers"
+                    "buyers"
+                    "industry"
+                    "rivalry"
+                    "substitutes"
+                    "barriers";
+                grid-template-columns: 1fr;
+                gap: 20px;
+                max-width: 500px;
+            }
+            .force-center {
+                min-height: 200px;
+                padding: 36px;
+            }
+            .force-block {
+                min-height: 180px;
+                padding: 24px;
+            }
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            .header {
+                padding: 20px;
+                margin-bottom: 24px;
+            }
+            .forces-container,
+            .chart-container,
+            .summary-section {
+                padding: 24px;
+                margin-bottom: 24px;
+            }
+            .forces-container h2,
+            .chart-container h3,
+            .summary-section h3 {
+                font-size: 1.5rem;
+                margin-bottom: 24px;
+            }
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+            .header-right {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .modal-content {
+                margin: 10% 16px;
+                padding: 24px;
+            }
+        }
+        .btn:focus,
+        select:focus {
+            outline: 3px solid rgba(102, 126, 234, 0.3);
+            outline-offset: 2px;
+        }
+        .force-block:focus {
+            outline: 3px solid rgba(102, 126, 234, 0.3);
+            outline-offset: 2px;
+        }
+        .force-block {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .force-block:nth-child(1) { animation-delay: 0.1s; }
+        .force-block:nth-child(2) { animation-delay: 0.2s; }
+        .force-block:nth-child(3) { animation-delay: 0.3s; }
+        .force-block:nth-child(4) { animation-delay: 0.4s; }
+        .force-block:nth-child(5) { animation-delay: 0.5s; }
+        .force-block:nth-child(6) { animation-delay: 0.6s; }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .editable {
+            border: 2px dashed transparent;
+            transition: all 0.3s ease;
+        }
+        .editable:hover {
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo">
+                        <i class="fas fa-cog"></i>
+                        <span>Cinco Fuerzas de Porter - Diseño de Servicios TI</span>
+                    </div>
+                    <div class="sector-selector">
+                        <label for="sectorSelect">Sector:</label>
+                        <select id="sectorSelect" onchange="changeSector()">
+                            <option value="produccion_logistica">Producción y Logística</option>
+                            <option value="educacion_universitaria">Educación Universitaria</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-success" onclick="saveData()" aria-label="Guardar datos">
+                        <i class="fas fa-save"></i>
+                        Guardar
+                    </button>
+                    <button class="btn btn-danger" onclick="resetData()" aria-label="Inicio">
+                        <i class="fas fa-home"></i>
+                        Inicio
+                    </button>
+                </div>
+            </div>
+        </header>
+        <section class="forces-container">
+            <h2><i class="fas fa-cog"></i> Análisis de las Cinco Fuerzas de Porter</h2>
+            <div class="forces-diagram">
+                <div class="force-center">
+                    <h3>INDUSTRIA</h3>
+                    <p id="industry-name">Producción y Logística</p>
+                </div>
+                <div class="force-block force-suppliers editable" onclick="editForce('suppliers')" tabindex="0" role="button" title="Evalúa el poder de negociación de los proveedores de recursos necesarios para el diseño de servicios TI en el sector">
+                    <div class="force-title">
+                        <i class="fas fa-truck"></i>
+                        Poder de Proveedores
+                    </div>
+                    <div class="force-content" id="suppliers-content">
+                        Proveedores de software ERP, sistemas IoT para cadena de suministro, plataformas de logística y hardware especializado en automatización industrial. Poder moderado-alto en el diseño de servicios TI debido a la dependencia de integraciones propietarias y estándares industriales específicos para optimizar procesos de producción y distribución.
+                    </div>
+                    <div class="rating">
+                        <input type="number" min="1" max="5" value="3" id="suppliers-rating" onchange="updateChart()" aria-label="Calificación del poder de proveedores">
+                        <span>/5</span>
+                    </div>
+                </div>
+                <div class="force-block force-buyers editable" onclick="editForce('buyers')" tabindex="0" role="button" title="Evalúa el poder de negociación de los clientes que adquieren servicios de diseño TI en el sector">
+                    <div class="force-title">
+                        <i class="fas fa-users"></i>
+                        Poder de Compradores
+                    </div>
+                    <div class="force-content" id="buyers-content">
+                        Empresas manufactureras, firmas de logística y cadenas de suministro globales que demandan diseños TI personalizados para eficiencia operativa. Alto poder debido a opciones múltiples de proveedores TI, benchmarks de rendimiento en tiempo real y presión por costos en entornos de producción just-in-time.
+                    </div>
+                    <div class="rating">
+                        <input type="number" min="1" max="5" value="4" id="buyers-rating" onchange="updateChart()" aria-label="Calificación del poder de compradores">
+                        <span>/5</span>
+                    </div>
+                </div>
+                <div class="force-block force-rivalry editable" onclick="editForce('rivalry')" tabindex="0" role="button" title="Mide la intensidad de la competencia en el diseño de servicios TI para el sector">
+                    <div class="force-title">
+                        <i class="fas fa-swords"></i>
+                        Rivalidad Competitiva
+                    </div>
+                    <div class="force-content" id="rivalry-content">
+                        Competencia intensa entre firmas de diseño TI especializadas en supply chain, consultoras industriales y proveedores de software como SAP o Oracle. Alta rivalidad por innovación en IA para predicción logística, personalización de diseños y cumplimiento de normativas de sostenibilidad en producción.
+                    </div>
+                    <div class="rating">
+                        <input type="number" min="1" max="5" value="4" id="rivalry-rating" onchange="updateChart()" aria-label="Calificación de la rivalidad competitiva">
+                        <span>/5</span>
+                    </div>
+                </div>
+                <div class="force-block force-substitutes editable" onclick="editForce('substitutes')" tabindex="0" role="button" title="Evalúa la amenaza de alternativas al diseño de servicios TI en el sector">
+                    <div class="force-title">
+                        <i class="fas fa-exchange-alt"></i>
+                        Productos Sustitutos
+                    </div>
+                    <div class="force-content" id="substitutes-content">
+                        Soluciones off-the-shelf como plataformas SaaS de logística (e.g., Fishbowl), desarrollo in-house o herramientas open-source para tracking. Amenaza moderada-alta ya que el diseño personalizado TI puede ser reemplazado por configuraciones estándar en entornos de producción escalables.
+                    </div>
+                    <div class="rating">
+                        <input type="number" min="1" max="5" value="3" id="substitutes-rating" onchange="updateChart()" aria-label="Calificación de la amenaza de sustitutos">
+                        <span>/5</span>
+                    </div>
+                </div>
+                <div class="force-block force-barriers editable" onclick="editForce('barriers')" tabindex="0" role="button" title="Analiza las dificultades para nuevos entrantes en el diseño de servicios TI para el sector">
+                    <div class="force-title">
+                        <i class="fas fa-shield-alt"></i>
+                        Barreras de Entrada
+                    </div>
+                    <div class="force-content" id="barriers-content">
+                        Barreras moderadas-altas: exige conocimiento profundo de procesos industriales, certificaciones ISO para logística y capital para prototipos de diseño TI. Sin embargo, la digitalización permite entrada de startups ágiles enfocadas en nichos como IoT para producción.
+                    </div>
+                    <div class="rating">
+                        <input type="number" min="1" max="5" value="4" id="barriers-rating" onchange="updateChart()" aria-label="Calificación de las barreras de entrada">
+                        <span>/5</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="chart-container">
+            <h3><i class="fas fa-chart-radar"></i> Visualización de Fuerzas</h3>
+            <div class="chart-wrapper">
+                <canvas id="forcesChart"></canvas>
+            </div>
+        </div>
+        <div class="summary-section">
+            <h3><i class="fas fa-clipboard-list"></i> Resumen Estratégico</h3>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h4>Fuerzas Dominantes</h4>
+                    <div id="dominant-forces"></div>
+                </div>
+                <div class="summary-card">
+                    <h4>Recomendaciones Estratégicas TI</h4>
+                    <div id="recommendations"></div>
+                </div>
+                <div class="summary-card">
+                    <h4>Tendencias Futuras</h4>
+                    <div id="future-trends"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Editar Fuerza</h3>
+                <button class="close-btn" onclick="closeModal()" aria-label="Cerrar modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="editContent">Descripción:</label>
+                <textarea id="editContent" placeholder="Describe esta fuerza competitiva específica para el diseño de servicios TI..."></textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" onclick="saveEdit()">Guardar</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+    <script>
+        let currentEditingElement = null;
+        let currentSector = 'produccion_logistica';
+        let forcesChart = null;
+        const sectorData = {
+            'produccion_logistica': {
+                name: "Producción y Logística",
+                forces: {
+                    suppliers: "Proveedores de software ERP, sistemas IoT para cadena de suministro, plataformas de logística y hardware especializado en automatización industrial. Poder moderado-alto en el diseño de servicios TI debido a la dependencia de integraciones propietarias y estándares industriales específicos para optimizar procesos de producción y distribución.",
+                    buyers: "Empresas manufactureras, firmas de logística y cadenas de suministro globales que demandan diseños TI personalizados para eficiencia operativa. Alto poder debido a opciones múltiples de proveedores TI, benchmarks de rendimiento en tiempo real y presión por costos en entornos de producción just-in-time.",
+                    rivalry: "Competencia intensa entre firmas de diseño TI especializadas en supply chain, consultoras industriales y proveedores de software como SAP o Oracle. Alta rivalidad por innovación en IA para predicción logística, personalización de diseños y cumplimiento de normativas de sostenibilidad en producción.",
+                    substitutes: "Soluciones off-the-shelf como plataformas SaaS de logística (e.g., Fishbowl), desarrollo in-house o herramientas open-source para tracking. Amenaza moderada-alta ya que el diseño personalizado TI puede ser reemplazado por configuraciones estándar en entornos de producción escalables.",
+                    barriers: "Barreras moderadas-altas: exige conocimiento profundo de procesos industriales, certificaciones ISO para logística y capital para prototipos de diseño TI. Sin embargo, la digitalización permite entrada de startups ágiles enfocadas en nichos como IoT para producción."
+                },
+                ratings: { suppliers: 3, buyers: 4, rivalry: 4, substitutes: 3, barriers: 4 }
+            },
+            'educacion_universitaria': {
+                name: "Educación Universitaria",
+                forces: {
+                    suppliers: "Proveedores de plataformas LMS (e.g., Moodle, Canvas), herramientas edtech, servicios cloud para e-learning y software de gestión académica. Poder moderado en el diseño de servicios TI debido a la necesidad de integraciones con sistemas educativos existentes y cumplimiento de estándares pedagógicos.",
+                    buyers: "Universidades, instituciones de educación superior y centros de investigación que requieren diseños TI para entornos virtuales y gestión de estudiantes. Poder alto por presupuestos limitados, regulaciones gubernamentales y comparación de soluciones edtech accesibles.",
+                    rivalry: "Competencia intensa entre diseñadores TI especializados en educación, proveedores de edtech y consultoras académicas. Alta rivalidad por innovación en VR/AR para clases, personalización de plataformas y adaptación a modelos híbridos post-pandemia.",
+                    substitutes: "Recursos educativos abiertos (OER), plataformas gratuitas como Google Classroom, desarrollo interno o métodos tradicionales no digitales. Amenaza alta con la proliferación de MOOCs y herramientas de autoservicio que reducen la necesidad de diseños TI personalizados.",
+                    barriers: "Barreras moderadas: requiere expertise en pedagogía digital, cumplimiento de privacidad de datos (GDPR/FERPA) y colaboración con educadores. La accesibilidad de herramientas open-source facilita la entrada, pero la escalabilidad para grandes universidades es compleja."
+                },
+                ratings: { suppliers: 3, buyers: 4, rivalry: 4, substitutes: 4, barriers: 3 }
+            }
+        };
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedData();
+            updateContent();
+            initializeChart();
+            updateSummary();
+            setupRatingValidation();
+            setupKeyboardNavigation();
+        });
+        function changeSector() {
+            const selector = document.getElementById('sectorSelect');
+            const selectedValue = selector.value;
+            const forcesContainer = document.querySelector('.forces-container');
+            forcesContainer.style.opacity = '0.5';
+            forcesContainer.style.pointerEvents = 'none';
+            setTimeout(() => {
+                currentSector = selectedValue;
+                updateContent();
+                updateChart();
+                updateSummary();
+                saveData();
+                forcesContainer.style.opacity = '1';
+                forcesContainer.style.pointerEvents = 'auto';
+                showNotification('Sector actualizado exitosamente', 'success');
+            }, 300);
+        }
+        function updateContent() {
+            const data = sectorData[currentSector];
+            document.getElementById('industry-name').textContent = data.name;
+            Object.keys(data.forces).forEach(key => {
+                const element = document.getElementById(key + '-content');
+                if (element) {
+                    element.textContent = data.forces[key];
+                }
+            });
+            Object.keys(data.ratings).forEach(key => {
+                const element = document.getElementById(key + '-rating');
+                if (element) {
+                    element.value = data.ratings[key];
+                }
+            });
+        }
+        function editForce(forceId) {
+            currentEditingElement = forceId;
+            const content = document.getElementById(forceId + '-content').textContent;
+            document.getElementById('modal-title').textContent = 'Editar ' + getForceTitle(forceId);
+            document.getElementById('editContent').value = content;
+            document.getElementById('editModal').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('editContent').focus();
+            }, 100);
+        }
+        function getForceTitle(forceId) {
+            const titles = {
+                suppliers: 'Poder de Proveedores',
+                buyers: 'Poder de Compradores',
+                rivalry: 'Rivalidad Competitiva',
+                substitutes: 'Productos Sustitutos',
+                barriers: 'Barreras de Entrada'
+            };
+            return titles[forceId] || 'Fuerza';
+        }
+        function saveEdit() {
+            if (!currentEditingElement) return;
+            const newContent = document.getElementById('editContent').value.trim();
+            if (!newContent) {
+                showNotification('El contenido no puede estar vacío', 'warning');
+                return;
+            }
+            const contentElement = document.getElementById(currentEditingElement + '-content');
+            if (contentElement) {
+                contentElement.style.opacity = '0.5';
+                setTimeout(() => {
+                    contentElement.textContent = newContent;
+                    contentElement.style.opacity = '1';
+                    sectorData[currentSector].forces[currentEditingElement] = newContent;
+                    updateSummary();
+                    saveData();
+                    showNotification('Contenido actualizado exitosamente', 'success');
+                }, 200);
+            }
+            closeModal();
+        }
+        function closeModal() {
+            const modal = document.getElementById('editModal');
+            modal.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modal.style.animation = '';
+                currentEditingElement = null;
+            }, 300);
+        }
+        function initializeChart() {
+            try {
+                const ctx = document.getElementById('forcesChart').getContext('2d');
+                const isDark = document.body.getAttribute('data-theme') === 'dark';
+                const textColor = isDark ? '#e2e8f0' : '#1a202c';
+                const gridColor = isDark ? '#2d3748' : '#e2e8f0';
+                forcesChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: [
+                            'Poder de Proveedores',
+                            'Poder de Compradores',
+                            'Rivalidad Competitiva',
+                            'Productos Sustitutos',
+                            'Barreras de Entrada'
+                        ],
+                        datasets: [{
+                            label: 'Intensidad (1-5)',
+                            data: [3, 4, 4, 3, 4],
+                            backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                            borderColor: 'rgba(102, 126, 234, 1)',
+                            borderWidth: 3,
+                            pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 3,
+                            pointRadius: 8,
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(102, 126, 234, 1)',
+                            pointHoverRadius: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeInOutQuart'
+                        },
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 5,
+                                min: 0,
+                                ticks: {
+                                    stepSize: 1,
+                                    color: textColor,
+                                    font: { size: 12, weight: '500' }
+                                },
+                                grid: { color: gridColor, lineWidth: 1 },
+                                angleLines: { color: gridColor, lineWidth: 1 },
+                                pointLabels: { color: textColor, font: { size: 13, weight: '600' } }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                labels: { color: textColor, font: { size: 14, weight: '500' }, padding: 20 }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                borderColor: 'rgba(102, 126, 234, 1)',
+                                borderWidth: 2,
+                                cornerRadius: 8,
+                                displayColors: false
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                showNotification('Error al inicializar el gráfico', 'error');
+                console.error('Chart initialization error:', error);
+            }
+        }
+        function updateChart() {
+            if (!forcesChart) return;
+            const data = [
+                parseInt(document.getElementById('suppliers-rating').value) || 3,
+                parseInt(document.getElementById('buyers-rating').value) || 3,
+                parseInt(document.getElementById('rivalry-rating').value) || 3,
+                parseInt(document.getElementById('substitutes-rating').value) || 3,
+                parseInt(document.getElementById('barriers-rating').value) || 3
+            ];
+            forcesChart.data.datasets[0].data = data;
+            forcesChart.update('active');
+            updateSummary();
+            const chartContainer = document.querySelector('.chart-container');
+            chartContainer.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                chartContainer.style.transform = 'scale(1)';
+            }, 150);
+        }
+        function updateSummary() {
+            const ratings = {
+                suppliers: parseInt(document.getElementById('suppliers-rating').value) || 3,
+                buyers: parseInt(document.getElementById('buyers-rating').value) || 3,
+                rivalry: parseInt(document.getElementById('rivalry-rating').value) || 3,
+                substitutes: parseInt(document.getElementById('substitutes-rating').value) || 3,
+                barriers: parseInt(document.getElementById('barriers-rating').value) || 3
+            };
+            const average = Object.values(ratings).reduce((a, b) => a + b, 0) / 5;
+            const intensity = average >= 4 ? 'Alta' : average >= 3 ? 'Moderada' : 'Baja';
+            const dominantForces = [];
+            const forceNames = {
+                suppliers: 'Poder de Proveedores',
+                buyers: 'Poder de Compradores',
+                rivalry: 'Rivalidad Competitiva',
+                substitutes: 'Productos Sustitutos',
+                barriers: 'Barreras de Entrada'
+            };
+            Object.keys(ratings).forEach(key => {
+                if (ratings[key] >= 4) {
+                    dominantForces.push(`${forceNames[key]} (${ratings[key]}/5)`);
+                }
+            });
+            let dominantForcesText = `<strong>Intensidad General: ${intensity}</strong><br><br>`;
+            if (dominantForces.length > 0) {
+                dominantForcesText += `• ${dominantForces.join('<br>• ')}<br><br><em>Implicaciones: Estas fuerzas dominantes requieren estrategias TI innovadoras para mantener la competitividad en el diseño de servicios.</em>`;
+            } else {
+                dominantForcesText += `No hay fuerzas dominantes (todas menores a 4).<br><br><em>Implicaciones: Oportunidad para liderar con soluciones TI disruptivas en un entorno equilibrado.</em>`;
+            }
+            document.getElementById('dominant-forces').innerHTML = dominantForcesText;
+            const recommendations = generateTechRecommendations(ratings, average, currentSector);
+            document.getElementById('recommendations').innerHTML = recommendations.join('<br>• ');
+            const futureTrends = generateFutureTrends(ratings, average, currentSector);
+            document.getElementById('future-trends').innerHTML = futureTrends.join('<br>• ');
+            if (sectorData[currentSector]) {
+                sectorData[currentSector].ratings = ratings;
+            }
+            const summaryCards = document.querySelectorAll('.summary-card');
+            summaryCards.forEach(card => {
+                card.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    card.style.transform = 'scale(1)';
+                }, 100);
+            });
+        }
+        function generateTechRecommendations(ratings, average, sector) {
+            const recommendations = [];
+            const sectorSpecificRecommendations = {
+                'produccion_logistica': {
+                    high: 'Integrar IA avanzada para optimización de rutas en tiempo real y blockchain para trazabilidad transparente en la cadena de suministro.',
+                    medium: 'Desarrollar soluciones TI modulares con IoT y edge computing para monitoreo predictivo en plantas de producción.',
+                    low: 'Expandir diseños TI escalables que integren robótica colaborativa y sistemas ERP para cadenas de suministro globales.',
+                    rivalry: 'Diferenciarse con soluciones TI que combinen IA generativa y gemelos digitales para simulaciones logísticas avanzadas.',
+                    buyers: 'Ofrecer prototipos TI interactivos con métricas de ROI claras, enfocándose en sostenibilidad y eficiencia operativa.',
+                    substitutes: 'Crear soluciones TI personalizadas que superen a plataformas SaaS genéricas mediante integración con hardware especializado.',
+                    suppliers: 'Establecer alianzas estratégicas con proveedores de IoT y ERP para co-diseños que optimicen procesos industriales.',
+                    barriers: 'Construir reputación mediante certificaciones ISO y casos de éxito en digitalización de procesos logísticos.'
+                },
+                'educacion_universitaria': {
+                    high: 'Desarrollar plataformas LMS con IA adaptativa y VR/AR para entornos educativos inmersivos y personalizados.',
+                    medium: 'Priorizar diseños TI que garanticen privacidad (GDPR/FERPA) and accesibilidad en plataformas de e-learning.',
+                    low: 'Colaborar con universidades para crear soluciones TI que integren analítica de datos para mejorar resultados académicos.',
+                    rivalry: 'Innovar con herramientas edtech que soporten modelos híbridos y experiencias inmersivas para superar competidores.',
+                    buyers: 'Ofrecer soluciones TI con costos escalables y demostraciones de impacto en la retención estudiantil.',
+                    substitutes: 'Diferenciarse de MOOCs y plataformas gratuitas con diseños TI personalizados que integren gamificación.',
+                    suppliers: 'Negociar con proveedores de LMS y cloud para integraciones que mejoren la experiencia educativa.',
+                    barriers: 'Fomentar entrada con soluciones open-source mejoradas y asociaciones con instituciones educativas.'
+                }
+            };
+            if (ratings.rivalry >= 4) {
+                recommendations.push(`🔥 <strong>Alta Rivalidad:</strong> ${sectorSpecificRecommendations[sector].rivalry}`);
+            }
+            if (ratings.buyers >= 4) {
+                recommendations.push(`👥 <strong>Compradores Exigentes:</strong> ${sectorSpecificRecommendations[sector].buyers}`);
+            }
+            if (ratings.substitutes >= 4) {
+                recommendations.push(`🔄 <strong>Amenaza de Sustitutos:</strong> ${sectorSpecificRecommendations[sector].substitutes}`);
+            }
+            if (ratings.suppliers >= 4) {
+                recommendations.push(`🤝 <strong>Proveedores Poderosos:</strong> ${sectorSpecificRecommendations[sector].suppliers}`);
+            }
+            if (ratings.barriers <= 2) {
+                recommendations.push(`⚠️ <strong>Barreras Bajas:</strong> ${sectorSpecificRecommendations[sector].barriers}`);
+            }
+            if (average >= 4) {
+                recommendations.push(`🎯 <strong>Estrategia General:</strong> ${sectorSpecificRecommendations[sector].high}`);
+            } else if (average >= 3) {
+                recommendations.push(`⚖️ <strong>Estrategia General:</strong> ${sectorSpecificRecommendations[sector].medium}`);
+            } else {
+                recommendations.push(`📈 <strong>Estrategia General:</strong> ${sectorSpecificRecommendations[sector].low}`);
+            }
+            return recommendations.slice(0, 6);
+        }
+        function generateFutureTrends(ratings, average, sector) {
+            const trends = [];
+            const sectorFutureTrends = {
+                'produccion_logistica': [
+                    'Adopción de gemelos digitales y IA cuántica para simulaciones predictivas en cadenas de suministro autónomas.',
+                    'Integración de blockchain para trazabilidad global y sostenible en logística 5.0.',
+                    'Uso de robótica colaborativa y 6G para manufactura hiperconectada y sin desperdicios.',
+                    'Implementación de edge computing para monitoreo en tiempo real de procesos industriales.',
+                    'Automatización avanzada con drones y vehículos autónomos para entregas logísticas instantáneas.'
+                ],
+                'educacion_universitaria': [
+                    'Aulas virtuales en metaverso con VR/AR para aprendizaje inmersivo y colaborativo global.',
+                    'Credenciales digitales basadas en blockchain para validación instantánea de competencias.',
+                    'IA adaptativa para personalización curricular basada en datos biométricos y neurofeedback.',
+                    'Integración de analítica predictiva para mejorar retención y éxito estudiantil en e-learning.',
+                    'Expansión de modelos educativos híbridos con gamificación y simulaciones inmersivas.'
+                ]
+            };
+            trends.push(...sectorFutureTrends[sector]);
+            if (average >= 4) {
+                trends.push('Alta intensidad impulsa adopción acelerada de tecnologías disruptivas para mantener competitividad en diseño TI.');
+            } else if (average >= 3) {
+                trends.push('Intensidad moderada favorece la integración de soluciones TI escalables y personalizadas.');
+            } else {
+                trends.push('Baja intensidad permite explorar innovaciones disruptivas para liderar mercados emergentes.');
+            }
+            return trends.slice(0, 5);
+        }
+        function saveData() {
+            const dataToSave = {
+                currentSector: currentSector,
+                sectorData: sectorData,
+                timestamp: new Date().toISOString(),
+                version: '2.0'
+            };
+            try {
+                const dataString = JSON.stringify(dataToSave);
+                if (dataString.length > 5 * 1024 * 1024) {
+                    showNotification('Almacenamiento lleno, elimina algunos sectores', 'error');
+                    return false;
+                }
+                localStorage.setItem('porterAnalysisData', dataString);
+                showNotification('Datos guardados exitosamente', 'success');
+                return true;
+            } catch (error) {
+                console.error('Save error:', error);
+                showNotification('Error al guardar datos: ' + error.message, 'error');
+                return false;
+            }
+        }
+        function loadSavedData() {
+            try {
+                const savedData = localStorage.getItem('porterAnalysisData');
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    Object.keys(parsedData.sectorData).forEach(sectorId => {
+                        if (sectorData[sectorId]) {
+                            sectorData[sectorId] = {
+                                ...sectorData[sectorId],
+                                ...parsedData.sectorData[sectorId]
+                            };
+                        } else {
+                            sectorData[sectorId] = parsedData.sectorData[sectorId];
+                        }
+                    });
+                    if (parsedData.currentSector && sectorData[parsedData.currentSector]) {
+                        currentSector = parsedData.currentSector;
+                        document.getElementById('sectorSelect').value = currentSector;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading saved data:', error);
+                showNotification('Error al cargar datos guardados', 'warning');
+            }
+        }
+        function resetData() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 400px; text-align: center;">
+                    <div class="modal-header">
+                        <h3>Confirmar Reinicio</h3>
+                    </div>
+                    <p style="margin-bottom: 24px; color: var(--text-secondary);">
+                        ¿Estás seguro de que deseas reiniciar todos los datos? Esto volverá al estado inicial y te redirigirá a la página principal.
+                        Esta acción no se puede deshacer.
+                    </p>
+                    <div style="display: flex; gap: 12px; justify-content: center;">
+                        <button class="btn btn-danger" onclick="confirmReset()">
+                            <i class="fas fa-home"></i> Inicio
+                        </button>
+                        <button class="btn btn-secondary" onclick="cancelReset()">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            window.confirmReset = () => {
+                localStorage.removeItem('porterAnalysisData');
+                document.body.removeChild(modal);
+                showNotification('Datos reiniciados. Redirigiendo a la página principal...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            };
+            window.cancelReset = () => {
+                document.body.removeChild(modal);
+            };
+        }
+        function showNotification(message, type = 'info', duration = 4000) {
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notif => notif.remove());
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 24px;
+                right: 24px;
+                padding: 16px 20px;
+                border-radius: 12px;
+                color: white;
+                font-weight: 600;
+                z-index: 1002;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                max-width: 350px;
+                box-shadow: var(--shadow-xl);
+                border-left: 4px solid;
+                backdrop-filter: blur(10px);
+            `;
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            const colors = {
+                success: '#10b981',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#3b82f6'
+            };
+            notification.style.backgroundColor = colors[type] || colors.info;
+            notification.style.borderLeftColor = colors[type] || colors.info;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="${icons[type] || icons.info}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 400);
+            }, duration);
+        }
+        function setupRatingValidation() {
+            const ratingInputs = document.querySelectorAll('input[type="number"]');
+            ratingInputs.forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const value = parseInt(input.value);
+                    let correctedValue = value;
+                    if (isNaN(value) || value < 1 || value > 5) {
+                        correctedValue = Math.max(1, Math.min(5, isNaN(value) ? 3 : value));
+                        input.value = correctedValue;
+                        input.style.borderColor = '#f59e0b';
+                        setTimeout(() => {
+                            input.style.borderColor = '';
+                        }, 1000);
+                        showNotification('La calificación debe estar entre 1 y 5', 'warning');
+                    } else {
+                        input.style.borderColor = '#10b981';
+                        setTimeout(() => {
+                            input.style.borderColor = '';
+                        }, 500);
+                    }
+                    updateChart();
+                    saveData();
+                });
+                input.addEventListener('input', (e) => {
+                    const value = parseInt(input.value);
+                    if (value >= 1 && value <= 5) {
+                        input.style.borderColor = '#10b981';
+                    } else if (input.value !== '') {
+                        input.style.borderColor = '#ef4444';
+                    } else {
+                        input.style.borderColor = '';
+                    }
+                });
+            });
+        }
+        function setupKeyboardNavigation() {
+            const forceBlocks = document.querySelectorAll('.force-block');
+            forceBlocks.forEach(block => {
+                block.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        block.click();
+                    }
+                });
+            });
+        }
+        window.addEventListener('click', function(event) {
+            const editModal = document.getElementById('editModal');
+            if (event.target === editModal) {
+                closeModal();
+            }
+        });
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+                const customModals = document.querySelectorAll('.modal:not(#editModal)');
+                customModals.forEach(modal => modal.remove());
+            }
+            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                event.preventDefault();
+                saveData();
+            }
+        });
+        let autoSaveInterval;
+        function startAutoSave() {
+            clearInterval(autoSaveInterval);
+            autoSaveInterval = setInterval(() => {
+                saveData();
+            }, 30000);
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            startAutoSave();
+        });
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') {
+                saveData();
+            }
+        });
+        window.addEventListener('beforeunload', function(event) {
+            saveData();
+        });
+    </script>
+</body>
+</html>

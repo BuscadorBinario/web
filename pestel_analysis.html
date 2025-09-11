@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis PESTEL - Diseño de Servicios de TI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00ff41;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(2px 2px at 20px 30px, #00ff41, transparent),
+                radial-gradient(2px 2px at 40px 70px, #ff0080, transparent),
+                radial-gradient(1px 1px at 90px 40px, #00ff41, transparent),
+                radial-gradient(1px 1px at 130px 80px, #ff0080, transparent),
+                radial-gradient(2px 2px at 160px 30px, #00ff41, transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: stars 20s linear infinite;
+            z-index: -1;
+        }
+        @keyframes stars {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100px); }
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease-out;
+        }
+        .header h1 {
+            color: #00ff41;
+            font-size: 3em;
+            font-weight: 900;
+            text-shadow: 0 0 10px #00ff41;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #b8b8b8;
+            font-size: 1.2em;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+        .tab-button {
+            padding: 15px 25px;
+            margin: 0 5px;
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid #00ff41;
+            cursor: pointer;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #00ff41;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .tab-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,65,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .tab-button:hover::before {
+            left: 100%;
+        }
+        .tab-button.active {
+            background: linear-gradient(45deg, #00ff41, #0080ff);
+            color: #000;
+            box-shadow: 0 0 20px #00ff41;
+            transform: scale(1.05);
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.8s ease-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .pestel-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .factor {
+            width: 18%;
+            text-align: center;
+            margin: 10px;
+            position: relative;
+            animation: slideInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(50px);
+            cursor: pointer;
+        }
+        .factor:nth-child(1) { animation-delay: 0.1s; }
+        .factor:nth-child(2) { animation-delay: 0.2s; }
+        .factor:nth-child(3) { animation-delay: 0.3s; }
+        .factor:nth-child(4) { animation-delay: 0.4s; }
+        .factor:nth-child(5) { animation-delay: 0.5s; }
+        .factor:nth-child(6) { animation-delay: 0.6s; }
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            color: #000;
+            position: relative;
+            box-shadow: 0 0 20px currentColor;
+            transition: all 0.3s ease;
+        }
+        .icon:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px currentColor;
+        }
+        .political .icon { background: linear-gradient(45deg, #34495e, #2c3e50); }
+        .economic .icon { background: linear-gradient(45deg, #3498db, #2980b9); }
+        .social .icon { background: linear-gradient(45deg, #2ecc71, #27ae60); }
+        .technological .icon { background: linear-gradient(45deg, #f39c12, #e67e22); }
+        .ecological .icon { background: linear-gradient(45deg, #e74c3c, #c0392b); }
+        .legal .icon { background: linear-gradient(45deg, #9b59b6, #8e44ad); }
+        .factor-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            color: #00ff41;
+            text-shadow: 0 0 5px #00ff41;
+        }
+        .factor-list {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 15px rgba(0,255,65,0.3);
+            min-height: 300px;
+            transition: all 0.3s ease;
+            display: block;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+        .factor-list.active {
+            display: block;
+        }
+        .factor-list:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 25px rgba(0,255,65,0.5);
+        }
+        .factor-item {
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .factor-item input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #00ff41;
+            border-radius: 5px;
+            box-sizing: border-box;
+            background: rgba(0,255,65,0.1);
+            color: #fff;
+            font-family: inherit;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .factor-item input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #00ff41;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .close-btn:hover {
+            transform: scale(1.2);
+            background: #c0392b;
+        }
+        .detail-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s;
+        }
+        .detail-modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            margin: 5% auto;
+            padding: 30px;
+            border: 2px solid #00ff41;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            color: #fff;
+            box-shadow: 0 0 30px #00ff41;
+            animation: slideInDown 0.5s ease-out;
+            text-align: left;
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        .detail-close {
+            color: #00ff41;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .detail-close:hover {
+            color: #ff0080;
+        }
+        .home-btn, .report-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #00ff41, #0080ff);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .home-btn::before, .report-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        .home-btn:hover::before, .report-btn:hover::before {
+            left: 100%;
+        }
+        .home-btn:hover, .report-btn:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 10px 30px rgba(0,255,65,0.5);
+        }
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pestel-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .factor {
+                width: 100%;
+                max-width: 300px;
+                margin: 15px 0;
+            }
+            .factor-list {
+                max-height: 500px;
+                padding: 15px;
+            }
+            .header h1 { font-size: 2em; }
+            .factor-item input {
+                font-size: 0.9em;
+            }
+            .detail-modal-content {
+                width: 90%;
+                margin: 10% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Análisis PESTEL Futurista</h1>
+            <p>Diseño de Servicios de Tecnologías de la Información</p>
+        </div>
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('sector1')">Sector de Producción y Logística</button>
+            <button class="tab-button" onclick="switchTab('sector2')">Sector de Educación Universitaria</button>
+            <button class="tab-button" onclick="switchTab('sector3')">Sector Adicional: Salud</button>
+        </div>
+        
+        <div id="sector1" class="tab-content active">
+            <div class="pestel-container">
+                <div class="factor political" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">🏛️</div>
+                    </div>
+                    <div class="factor-title">Factores Políticos</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Clima político estable en cadenas de suministro" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Políticas fiscales para importaciones tecnológicas" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Actividad gubernamental en regulaciones logísticas" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Conflictos geopolíticos afectando rutas" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Impuestos sobre software de TI" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Subvenciones para innovación en logística" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                
+                <div class="factor economic" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">📈</div>
+                    </div>
+                    <div class="factor-title">Factores Económicos</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Crecimiento del PIB industrial" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Tasa de empleo en sector manufacturero" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Fluctuaciones en tipo de cambio para exportaciones" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Inflación en costos de transporte" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Nivel de renta en mercados emergentes" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Inversión en automatización logística" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                
+                <div class="factor social" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">👥</div>
+                    </div>
+                    <div class="factor-title">Factores Sociales</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Cambios demográficos en fuerza laboral" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Cultura de eficiencia en producción" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Preferencias religiosas en cadenas éticas" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Estilos de vida que demandan entrega rápida" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Educación en habilidades digitales para logística" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Tendencias de trabajo remoto afectando supply chain" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                
+                <div class="factor technological" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">📡</div>
+                    </div>
+                    <div class="factor-title">Factores Tecnológicos</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Acceso a IoT en fábricas" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Infraestructura 5G para logística en tiempo real" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Investigación en IA para optimización de rutas" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Tendencias en blockchain para trazabilidad" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Drones y robótica en almacenes" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                
+                <div class="factor ecological" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">🌿</div>
+                    </div>
+                    <div class="factor-title">Factores Ecológicos</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Políticas ambientales para emisiones en transporte" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Reciclaje de hardware TI en producción" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Tendencias de consumo sostenible" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Procesos de producción ecológicos" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Riesgos climáticos en supply chain global" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Energía renovable en centros de datos logísticos" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                
+                <div class="factor legal" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">⚖️</div>
+                    </div>
+                    <div class="factor-title">Factores Legales</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Salarios mínimos en industria manufacturera" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Derechos laborales en turnos de producción" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Seguridad laboral con maquinaria automatizada" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Reglamentos de datos en logística digital" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Control de precios en contratos TI" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Cumplimiento GDPR en cadenas internacionales" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="sector2" class="tab-content">
+            <div class="pestel-container">
+                <div class="factor political" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">🏛️</div>
+                    </div>
+                    <div class="factor-title">Factores Políticos</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Políticas educativas nacionales" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Financiamiento gubernamental para universidades" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Regulaciones en acreditación de programas TI" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Apoyo a becas en educación digital" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Impuestos a instituciones educativas" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Colaboraciones público-privadas en TI" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                
+                <div class="factor economic" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">📈</div>
+                    </div>
+                    <div class="factor-title">Factores Económicos</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Presupuestos universitarios crecientes" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Empleo de graduados en TI" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Costos de matrícula y accesibilidad" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Inflación en recursos educativos" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Inversión en edtech" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Renta media de estudiantes post-graduación" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                
+                <div class="factor social" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">👥</div>
+                    </div>
+                    <div class="factor-title">Factores Sociales</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Demanda de educación superior en TI" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Diversidad cultural en campuses" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Influencia religiosa en currículos" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Estilos de aprendizaje híbridos" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Nivel de alfabetización digital" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Tendencias de lifelong learning" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                
+                <div class="factor technological" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">📡</div>
+                    </div>
+                    <div class="factor-title">Factores Tecnológicos</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Plataformas LMS avanzadas" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Infraestructura cloud para educación" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Investigación en VR/AR para clases" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Tendencias en IA para personalización" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Ciberseguridad en sistemas educativos" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                
+                <div class="factor ecological" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">🌿</div>
+                    </div>
+                    <div class="factor-title">Factores Ecológicos</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Sostenibilidad en campuses universitarios" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Reciclaje de dispositivos educativos" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Consumo energético de data centers educativos" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Procesos digitales para reducir papel" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Riesgos ambientales en construcción de edificios" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Educación ambiental en currículos TI" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                
+                <div class="factor legal" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">⚖️</div>
+                    </div>
+                    <div class="factor-title">Factores Legales</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Salarios de profesores en TI" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Derechos de estudiantes en plataformas digitales" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Seguridad en entornos virtuales" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Reglamentos de privacidad de datos estudiantiles" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Control de costos en contratos edtech" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Cumplimiento de leyes de accesibilidad" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="sector3" class="tab-content">
+            <div class="pestel-container">
+                <div class="factor political" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">🏛️</div>
+                    </div>
+                    <div class="factor-title">Factores Políticos</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Políticas de salud pública y TI" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Regulaciones gubernamentales en telemedicina" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                <div class="factor economic" onclick="toggleFactor(this)">
+                    <div class="icon">
+                        <div class="icon-content">📈</div>
+                    </div>
+                    <div class="factor-title">Factores Económicos</div>
+                    <div class="factor-list">
+                        <div class="factor-item"><input type="text" value="Presupuestos en salud digital" readonly onclick="showDetail(this)" /></div>
+                        <div class="factor-item"><input type="text" value="Inversión en telemedicina" readonly onclick="showDetail(this)" /></div>
+                        <button class="close-btn" onclick="closeFactor(event, this)">×</button>
+                    </div>
+                </div>
+                <!-- Add more factors for sector3 if needed -->
+            </div>
+        </div>
+        
+        <button class="report-btn" onclick="generatePDF()">Generar Informe</button>
+        <a href="index.html" class="home-btn">Volver a Inicio</a>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="detail-modal">
+        <div class="detail-modal-content">
+            <span class="detail-close" onclick="closeDetailModal()">&times;</span>
+            <p id="detailText"></p>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(sector) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(sector).classList.add('active');
+            event.target.classList.add('active');
+            
+            const factors = document.querySelectorAll('.factor');
+            factors.forEach(f => {
+                f.style.animation = 'none';
+                f.offsetHeight;
+                f.style.animation = null;
+            });
+        }
+
+        function toggleFactor(element) {
+            const factorList = element.querySelector('.factor-list');
+            factorList.classList.toggle('active');
+        }
+
+        function closeFactor(event, button) {
+            event.stopPropagation();
+            const factorList = button.parentElement;
+            factorList.classList.remove('active');
+        }
+
+        function showDetail(input) {
+            const detailText = document.getElementById('detailText');
+            detailText.textContent = input.value;
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            let y = 20;
+            let pageNum = 1;
+
+            // Title
+            doc.setFontSize(20);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Informe Detallado de Análisis PESTEL', 105, y, { align: 'center' });
+            y += 15;
+            doc.setFontSize(12);
+            doc.text('Diseño de Servicios de Tecnologías de la Información', 105, y, { align: 'center' });
+            y += 20;
+
+            // Sectors
+            const sectors = [
+                { id: 'sector1', title: 'Sector de Producción y Logística' },
+                { id: 'sector2', title: 'Sector de Educación Universitaria' },
+                { id: 'sector3', title: 'Sector Adicional: Salud' }
+            ];
+
+            sectors.forEach(sector => {
+                if (y > 280) {
+                    doc.addPage();
+                    y = 20;
+                    pageNum++;
+                }
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.text(sector.title, 20, y);
+                y += 10;
+
+                // PESTEL Factors
+                const pestelFactors = ['political', 'economic', 'social', 'technological', 'ecological', 'legal'];
+                pestelFactors.forEach(factorType => {
+                    if (y > 280) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.setFontSize(14);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(factorType.charAt(0).toUpperCase() + factorType.slice(1), 30, y);
+                    y += 8;
+
+                    const factorElement = document.querySelector(`#${sector.id} .${factorType}`);
+                    if (factorElement) {
+                        const inputs = factorElement.querySelectorAll('.factor-item input');
+                        doc.setFontSize(10);
+                        doc.setFont('helvetica', 'normal');
+                        inputs.forEach((input, index) => {
+                            if (y > 280) {
+                                doc.addPage();
+                                y = 20;
+                            }
+                            const text = `${index + 1}. ${input.value}`;
+                            doc.text(text, 40, y);
+                            y += 6;
+                        });
+                    }
+                    y += 5;
+                });
+                y += 10;
+            });
+
+            // Footer
+            if (y > 280) {
+                doc.addPage();
+            }
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'italic');
+            doc.text(`Generado el ${new Date().toLocaleDateString('es-ES')}`, 105, 290, { align: 'center' });
+
+            doc.save('Informe_PESTEL_Detallado.pdf');
+        }
+
+        window.onclick = function(event) {
+            const detailModal = document.getElementById('detailModal');
+            if (event.target == detailModal) {
+                closeDetailModal();
+            }
+        }
+    </script>
+</body>
+</html>

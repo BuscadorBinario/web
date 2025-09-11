@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadena de Valor - Servicios TI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(20, 33, 61, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            overflow: hidden;
+            position: relative;
+            animation: glowPulse 4s infinite ease-in-out;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #1b263b, #415a77);
+            color: #00ffea;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid rgba(0, 255, 255, 0.5);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ffea, 0 0 20px #ff00ff;
+            animation: neonGlow 2s infinite alternate;
+            flex: 1 1 100%;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #00ffea, #ff00ff);
+            color: #1b263b;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+            animation: pulseButton 1.5s infinite;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .value-chain {
+            padding: 40px;
+            position: relative;
+            background: linear-gradient(45deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+        }
+
+        .chain-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #00ffea;
+            text-shadow: 0 0 10px #00ffea;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .chain-container {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .activities-section {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .section-title {
+            position: absolute;
+            left: -120px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            background: linear-gradient(45deg, #ff00ff, #00ffea);
+            color: #1b263b;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 15px;
+            white-space: nowrap;
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .support-activities {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .primary-activities {
+            display: flex;
+            gap: 5px;
+        }
+
+        .activity-card {
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: slideInLeft 0.6s ease-out forwards;
+            opacity: 0;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .activity-card:nth-child(1) { animation-delay: 0.1s; }
+        .activity-card:nth-child(2) { animation-delay: 0.2s; }
+        .activity-card:nth-child(3) { animation-delay: 0.3s; }
+        .activity-card:nth-child(4) { animation-delay: 0.4s; }
+        .activity-card:nth-child(5) { animation-delay: 0.5s; }
+
+        .support-activity {
+            background: linear-gradient(45deg, #ff00ff, #e63946);
+            flex: 1;
+        }
+
+        .primary-activity {
+            background: linear-gradient(45deg, #00ffea, #1b9aaa);
+            flex: 1;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+            border: 1px solid #00ffea;
+        }
+
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .activity-card:hover::before {
+            opacity: 1;
+        }
+
+        .margin-label {
+            position: absolute;
+            right: -100px;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            background: linear-gradient(45deg, #ffd60a, #ff00ff);
+            color: #1b263b;
+            padding: 10px 30px;
+            font-weight: bold;
+            border-radius: 15px;
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: rgba(20, 33, 61, 0.95);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            animation: slideInDown 0.4s ease-out;
+            border: 2px solid #00ffea;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #00ffea;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #ff00ff;
+        }
+
+        .modal h3 {
+            color: #00ffea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px #00ffea;
+        }
+
+        .modal p {
+            line-height: 1.6;
+            color: #e0e0e0;
+            font-size: 1.1rem;
+        }
+
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.7), transparent);
+            border-radius: 50%;
+            animation: floatFuturistic 5s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+
+        .particle:nth-child(odd) {
+            background: radial-gradient(circle, rgba(255, 0, 255, 0.7), transparent);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.7);
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #00ffea;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .support-color { background: linear-gradient(45deg, #ff00ff, #e63946); }
+        .primary-color { background: linear-gradient(45deg, #00ffea, #1b9aaa); }
+
+        #homePage {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: rgba(20, 33, 61, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            overflow: hidden;
+            animation: glowPulse 4s infinite ease-in-out;
+        }
+
+        .hero {
+            background: linear-gradient(45deg, #1b263b, #415a77);
+            color: #00ffea;
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 2px solid rgba(0, 255, 255, 0.5);
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ffea, 0 0 20px #ff00ff;
+            animation: neonGlow 2s infinite alternate;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+
+        .hero .nav-btn {
+            margin: 0 auto;
+            display: inline-block;
+        }
+
+        .info-section {
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .info-card {
+            background: rgba(27, 38, 59, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            width: 500px;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: slideInLeft 0.6s ease-out forwards;
+            opacity: 0;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .info-card:nth-child(1) { animation-delay: 0.2s; }
+        .info-card:nth-child(2) { animation-delay: 0.4s; }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+            border: 1px solid #00ffea;
+        }
+
+        .info-card i {
+            font-size: 3rem;
+            color: #00ffea;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+            animation: pulseIcon 2s infinite;
+        }
+
+        .info-card:hover i {
+            transform: rotate(360deg);
+        }
+
+        .info-card h3 {
+            font-size: 1.8rem;
+            color: #00ffea;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #00ffea;
+        }
+
+        .info-card p {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .info-card ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .info-card li {
+            font-size: 1rem;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .info-card li::before {
+            content: '>>';
+            color: #00ffea;
+            position: absolute;
+            left: 0;
+            text-shadow: 0 0 5px #00ffea;
+        }
+
+        .home-buttons {
+            padding: 20px;
+            text-align: center;
+        }
+
+        @keyframes neonGlow {
+            0% { text-shadow: 0 0 10px #00ffea, 0 0 20px #ff00ff; }
+            100% { text-shadow: 0 0 20px #00ffea, 0 0 30px #ff00ff; }
+        }
+
+        @keyframes pulseButton {
+            0% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.6); }
+            100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+        }
+
+        @keyframes pulseIcon {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes glowPulse {
+            0% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); }
+            100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes floatFuturistic {
+            0% {
+                transform: translateY(100vh) scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(50vh) scale(1.2);
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section-title, .margin-label {
+                position: relative;
+                transform: none;
+                left: auto;
+                right: auto;
+                top: auto;
+                margin: 10px 0;
+                text-align: center;
+            }
+
+            .chain-container {
+                padding: 0 20px;
+            }
+
+            .primary-activities {
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                margin: 10px auto;
+                display: block;
+            }
+
+            .info-card {
+                width: 100%;
+            }
+
+            .header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles"></div>
+    
+    <div id="homePage">
+        <div class="hero">
+            <h2>Bienvenido a la Cadena de Valor de Servicios TI</h2>
+            <p>Explora cómo las tecnologías de la información transforman los sectores de Producción y Logística y Educación Universitaria a través de soluciones innovadoras y cadenas de valor optimizadas.</p>
+            <button class="nav-btn" onclick="window.location.href='index.html'" aria-label="Ir a Inicio">Inicio</button>
+        </div>
+        <div class="info-section">
+            <div class="info-card">
+                <i class="fas fa-industry" aria-hidden="true"></i>
+                <h3>Diseño de Servicios TI para Producción y Logística</h3>
+                <p>Los servicios de tecnologías de la información en el sector de Producción y Logística están diseñados para optimizar procesos, mejorar la eficiencia y garantizar la continuidad operativa. Estos servicios integran tecnologías avanzadas para gestionar la cadena de suministro, automatizar procesos y proporcionar visibilidad en tiempo real.</p>
+                <ul>
+                    <li>Automatización Industrial: Sistemas de control de producción (MES) y monitoreo IoT para maquinaria.</li>
+                    <li>Gestión de Inventarios: Uso de RFID y códigos de barras para un control preciso de existencias.</li>
+                    <li>Optimización Logística: Sistemas de gestión de almacenes (WMS) y rastreo GPS para entregas eficientes.</li>
+                    <li>Inteligencia Artificial: Algoritmos para mantenimiento predictivo y optimización de rutas.</li>
+                    <li>Infraestructura Robusta: Soluciones de cloud computing y seguridad informática para proteger datos críticos.</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                <h3>Diseño de Servicios TI para Educación Universitaria</h3>
+                <p>En el sector de Educación Universitaria, los servicios TI potencian la enseñanza, la gestión académica y la experiencia estudiantil. Estas soluciones facilitan el aprendizaje virtual, la colaboración global y la gestión eficiente de recursos institucionales.</p>
+                <ul>
+                    <li>Plataformas de Aprendizaje: LMS como Moodle o Canvas para clases virtuales e híbridas.</li>
+                    <li>Gestión Estudiantil: Sistemas de información estudiantil (SIS) para admisiones y matrículas.</li>
+                    <li>Bibliotecas Digitales: Acceso a recursos académicos en línea y repositorios digitales.</li>
+                    <li>Realidad Virtual/Aumentada: Herramientas inmersivas para simulaciones educativas.</li>
+                    <li>Servicios de Alumni: Plataformas de networking y certificación digital para egresados.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="home-buttons">
+            <button class="nav-btn" onclick="showValueChain()" aria-label="Ver Cadena de Valor">Ver Cadena de Valor</button>
+        </div>
+    </div>
+
+    <div class="container" style="display: none;">
+        <div class="header">
+            <button class="nav-btn" onclick="showHomePage()" aria-label="Inicio Principal">Inicio Principal</button>
+            <h1>CADENA DE VALOR</h1>
+            <p>Diseño de Servicios de Tecnologías de la Información</p>
+        </div>
+
+        <div class="value-chain">
+            <h2 class="chain-title" id="chainTitle">Sector: Producción y Logística</h2>
+            
+            <div class="chain-container">
+                <div class="activities-section">
+                    <div class="section-title">Actividades de Soporte</div>
+                    <div class="support-activities" id="supportActivities">
+                        <!-- Actividades de soporte se generan dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="section-separator"></div>
+
+                <div class="activities-section">
+                    <div class="primary-activities" id="primaryActivities">
+                        <!-- Actividades primarias se generan dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="margin-label">MARGEN</div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color support-color"></div>
+                    <span>Actividades de Soporte</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color primary-color"></div>
+                    <span>Actividades Primarias</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="activityModal" class="modal" role="dialog" aria-labelledby="modalTitle">
+        <div class="modal-content">
+            <span class="close" aria-label="Cerrar modal">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <p id="modalContent"></p>
+        </div>
+    </div>
+
+    <script>
+        // Datos de las cadenas de valor
+        const valueChainData = {
+            produccion: {
+                title: "Sector: Producción y Logística",
+                support: [
+                    {
+                        name: "Infraestructura TI Empresarial",
+                        description: "Sistemas ERP, servidores, redes, bases de datos, cloud computing, seguridad informática y arquitectura tecnológica para soportar operaciones de producción y logística."
+                    },
+                    {
+                        name: "Gestión de Recursos Digitales",
+                        description: "Administración de licencias de software, gestión de usuarios, políticas de acceso, capacitación en herramientas TI y soporte técnico especializado."
+                    },
+                    {
+                        name: "Desarrollo de Tecnología",
+                        description: "I+D en automatización industrial, IoT para manufactura, inteligencia artificial para optimización, desarrollo de aplicaciones móviles y sistemas de monitoreo en tiempo real."
+                    },
+                    {
+                        name: "Adquisiciones Tecnológicas",
+                        description: "Procurement de hardware especializado, software de manufactura, sensores IoT, sistemas de automatización, contratación de servicios cloud y proveedores tecnológicos."
+                    }
+                ],
+                primary: [
+                    {
+                        name: "Sistemas de Entrada",
+                        description: "Recepción digital de órdenes, gestión de inventarios con RFID/códigos de barras, sistemas de planificación de recursos (MRP), interfaces con proveedores."
+                    },
+                    {
+                        name: "Operaciones Digitales",
+                        description: "Sistemas de control de producción (MES), automatización de líneas, monitoreo IoT de maquinaria, control de calidad digital, gestión de mantenimiento predictivo."
+                    },
+                    {
+                        name: "Logística de Salida",
+                        description: "Sistemas de gestión de almacenes (WMS), optimización de rutas, tracking GPS de envíos, integración con transportistas, gestión de distribución."
+                    },
+                    {
+                        name: "Marketing Digital",
+                        description: "Plataformas B2B, CRM especializado, marketing automation, portales de clientes, e-commerce industrial, analytics de ventas."
+                    },
+                    {
+                        name: "Servicios Postventa",
+                        description: "Sistemas de soporte técnico, mantenimiento remoto, aplicaciones de servicio al cliente, gestión de garantías, portales de autoservicio."
+                    }
+                ]
+            },
+            educacion: {
+                title: "Sector: Educación Universitaria",
+                support: [
+                    {
+                        name: "Infraestructura TI Educativa",
+                        description: "Plataformas LMS (Moodle, Canvas), servidores académicos, redes wifi de campus, bibliotecas digitales, sistemas de videoconferencia y aulas virtuales."
+                    },
+                    {
+                        name: "Gestión de Recursos Académicos",
+                        description: "Sistemas de gestión estudiantil (SIS), administración de personal docente, gestión de licencias educativas, soporte técnico estudiantil y capacitación digital."
+                    },
+                    {
+                        name: "Desarrollo Tecnológico Educativo",
+                        description: "Desarrollo de contenido digital, simuladores educativos, realidad virtual/aumentada para enseñanza, aplicaciones móviles educativas, investigación en EdTech."
+                    },
+                    {
+                        name: "Adquisiciones Educativas",
+                        description: "Procurement de software educativo, hardware para laboratorios, licencias de investigación, plataformas de e-learning, equipos multimedia y tecnología de aulas."
+                    }
+                ],
+                primary: [
+                    {
+                        name: "Admisiones Digitales",
+                        description: "Portales de aplicación online, sistemas de evaluación digital, procesos de matrícula automatizados, gestión de documentos electrónicos, CRM estudiantil."
+                    },
+                    {
+                        name: "Enseñanza-Aprendizaje",
+                        description: "Plataformas de educación virtual, sistemas de gestión de clases, herramientas de colaboración online, evaluación digital, contenido multimedia interactivo."
+                    },
+                    {
+                        name: "Servicios Estudiantiles",
+                        description: "Portales estudiantiles, sistemas de biblioteca digital, aplicaciones móviles de campus, servicios de bienestar estudiantil digitales, plataformas de networking."
+                    },
+                    {
+                        name: "Investigación y Extensión",
+                        description: "Plataformas de gestión de investigación, repositorios digitales, sistemas de publicación académica, colaboración internacional digital, transferencia tecnológica."
+                    },
+                    {
+                        name: "Graduación y Alumni",
+                        description: "Sistemas de seguimiento de egresados, plataformas de networking de alumni, certificación digital de títulos, bolsas de trabajo online, educación continua virtual."
+                    }
+                ]
+            }
+        };
+
+        let currentSector = 'produccion';
+
+        // Elementos del DOM
+        const chainTitle = document.getElementById('chainTitle');
+        const supportActivities = document.getElementById('supportActivities');
+        const primaryActivities = document.getElementById('primaryActivities');
+        const modal = document.getElementById('activityModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const closeModal = document.querySelector('.close');
+        const mainContainer = document.querySelector('.container');
+        const homeContainer = document.getElementById('homePage');
+
+        // Funciones de navegación
+        function showHomePage() {
+            mainContainer.style.display = 'none';
+            homeContainer.style.display = 'block';
+            homeContainer.setAttribute('aria-hidden', 'false');
+            mainContainer.setAttribute('aria-hidden', 'true');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showValueChain(sector = 'produccion') {
+            homeContainer.style.display = 'none';
+            mainContainer.style.display = 'block';
+            homeContainer.setAttribute('aria-hidden', 'true');
+            mainContainer.setAttribute('aria-hidden', 'false');
+            currentSector = sector;
+            renderValueChain();
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            showHomePage();
+            renderValueChain();
+            createFloatingParticles();
+        });
+
+        // Renderizar cadena de valor
+        function renderValueChain() {
+            const data = valueChainData[currentSector];
+            
+            chainTitle.textContent = data.title;
+            chainTitle.style.animation = 'none';
+            setTimeout(() => {
+                chainTitle.style.animation = 'slideInUp 0.8s ease-out';
+            }, 10);
+
+            supportActivities.innerHTML = '';
+            primaryActivities.innerHTML = '';
+
+            data.support.forEach((activity, index) => {
+                const card = createActivityCard(activity.name, activity.description, 'support-activity');
+                card.style.animationDelay = `${index * 0.1}s`;
+                supportActivities.appendChild(card);
+            });
+
+            data.primary.forEach((activity, index) => {
+                const card = createActivityCard(activity.name, activity.description, 'primary-activity');
+                card.style.animationDelay = `${index * 0.1}s`;
+                primaryActivities.appendChild(card);
+            });
+        }
+
+        // Crear tarjeta de actividad
+        function createActivityCard(name, description, className) {
+            const card = document.createElement('div');
+            card.className = `activity-card ${className}`;
+            card.textContent = name;
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-label', `Ver detalles de ${name}`);
+            card.addEventListener('click', () => showModal(name, description));
+            return card;
+        }
+
+        // Mostrar modal
+        function showModal(title, content) {
+            modalTitle.textContent = title;
+            modalContent.textContent = content;
+            modal.style.display = 'block';
+            modalContent.style.animation = 'none';
+            setTimeout(() => {
+                modalContent.style.animation = 'slideInDown 0.4s ease-out';
+            }, 10);
+            modal.focus();
+        }
+
+        // Cerrar modal
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Crear partículas flotantes
+        function createFloatingParticles() {
+            const particlesContainer = document.querySelector('.floating-particles');
+            const maxParticles = 20;
+            
+            function createParticle() {
+                if (particlesContainer.children.length >= maxParticles) return;
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 6 + 4 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                particlesContainer.appendChild(particle);
+                setTimeout(() => particle.remove(), 5000);
+            }
+
+            setInterval(createParticle, 1000);
+        }
+
+        // Efectos adicionales al hacer hover sobre las tarjetas
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.classList.contains('activity-card')) {
+                e.target.style.transform = 'translateY(-5px) scale(1.05)';
+            }
+        });
+
+        document.addEventListener('mouseout', function(e) {
+            if (e.target.classList.contains('activity-card')) {
+                e.target.style.transform = 'translateY(0) scale(1)';
+            }
+        });
+    </script>
+</body>
+</html>
